@@ -13,7 +13,7 @@ setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 retweet = function(twt) {
   resource_url = "https://api.twitter.com/1.1/statuses/retweet/"
   tweet_id = twt$id
-  POST(paste(resource_url, tweet_id, sep = ""))
+  POST(paste(resource_url, tweet_id, ".json", sep = ""))
 }
 
 twitterbot = function(handle) {
