@@ -3,7 +3,6 @@
 
 library(twitteR)
 library(httr)
-library(magrittr)
 
 consumer_key = ""
 consumer_secret = ""
