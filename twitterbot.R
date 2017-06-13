@@ -7,7 +7,7 @@ library(httr)
 consumer_key = ""
 consumer_secret = ""
 access_token = ""
-access_secret = ""
+access_secret = "" 
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
 retweet = function(twt) {
@@ -17,10 +17,10 @@ retweet = function(twt) {
 }
 
 twitterbot = function(handle) {
+  to only deal with tweets
   
   tweets = searchTwitter(handle, n = 100, lang = "en")
-  tweets = strip_retweets(tweets) # if we want to only deal with tweets
-  
+  tweets = strip_retweets(tweets) # if we want 
   # Andrew's series of tweet text cleaner functions, but without the data.frame conversion
   tweets = sapply(tweets, function(x) x$getText())
   tweets = gsub("[^[:print:]]", "", tweets)
@@ -54,3 +54,5 @@ twitterbot = function(handle) {
 }
 
 dev.off()
+
+setup
