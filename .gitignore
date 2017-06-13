@@ -4,4 +4,4 @@
 .Ruserdata
 sandbox.R
 .httr-oauth
-.pem
+TwitterBot.pem

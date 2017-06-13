@@ -14,13 +14,6 @@ consumer_secret = "Bmgb4N5xLiyF5oEAcJ2KwjniiFki7iescrUHUDCS7KHrPR4mOo"
 access_token = "872426899271815168-P7O3oaadMoEMJ2runZeMXVZFmqH3dxi"
 access_secret = "AZEnBvebNG8dvqwVkA24r6kFvf2L16eNtNipn1sO50uYl"
 
-<<<<<<< HEAD
-consumer_key = ""
-consumer_secret = ""
-access_token = ""
-access_secret = "" 
-=======
->>>>>>> 72f40ecec2b44f19ae2bece170b6f2003601852c
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
 
@@ -62,11 +55,9 @@ tweet_responses = function(twt) {
 }
 
 twitterbot = function(handle) {
-  to only deal with tweets
   
   tweets = searchTwitter(handle, n = 100, lang = "en")
-  tweets = strip_retweets(tweets) # if we want 
-  # Andrew's series of tweet text cleaner functions, but without the data.frame conversion
+  tweets = strip_retweets(tweets)
   tweets.txt = sapply(tweets, function(x) x$getText())
   tweets.txt = gsub("[^[:print:]]", "", tweets.txt)
   tweets.txt = gsub("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", "", tweets.txt)
@@ -100,10 +91,3 @@ twitterbot = function(handle) {
     }
   }
 }
-
-<<<<<<< HEAD
-dev.off()
-
-setup
-=======
->>>>>>> 72f40ecec2b44f19ae2bece170b6f2003601852c
