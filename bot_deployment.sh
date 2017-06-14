@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript
 
-
 library(twitteR)
 library(httr)
 library(magrittr)
@@ -49,16 +48,16 @@ tweet_sentiment = function(twt) {
   }
 }
 
-negative_response = function() {
+negative_response = function(twt) {
   responses = c("Incorrect.", "I disagree.", "You are wrong.")
-  response = sample(responses, size = 1)
-  return(response)
+  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
+  updateStatus(response, inReplyTo = twt$id)
 }
 
-affirmative_response = function() {
+affirmative_response = function(twt) {
   responses = c("I agree.", "You're so right!", "Truth.")
-  response = sample(responses, size = 1)
-  return(response)
+  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
+  updateStatus(response, inReplyTo = twt$id)
 }
 
 twitterbot = function(handle) {
@@ -74,7 +73,7 @@ twitterbot = function(handle) {
   
   
   count = 0
-  max_bot_actions = 1
+  max_bot_actions = 3
   
   for (i in 1:length(tweets)) {
     if (tweet_sentiment(tweets.txt[[i]]) == "neutral") {
@@ -82,12 +81,12 @@ twitterbot = function(handle) {
     }
     
     else if (tweet_sentiment(tweets.txt[[i]]) == "negative") {
-      updateStatus(text = affirmative_response(), inReplyTo = tweets[[i]]$id)
+      affirmative_response(tweets[[i]])
       count = count + 1
     }
     
     else {
-      updateStatus(text = negative_response(), inReplyTo = tweets[[i]]$id)
+      negative_response(tweets[[i]])
       count = count + 1
     }
     
