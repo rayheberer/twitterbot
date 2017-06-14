@@ -96,3 +96,5 @@ twitterbot = function(handle) {
     }
   }
 }
+
+twitterbot("@realDonaldTrump")
