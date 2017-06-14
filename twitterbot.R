@@ -20,7 +20,7 @@ setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 retweet = function(twt) {
   resource_url = "https://api.twitter.com/1.1/statuses/retweet/"
   tweet_id = twt$id
-  POST(paste(resource_url, tweet_id, ".json", sep = ""))
+  POST(url = paste(resource_url, tweet_id, ".json" , sep = ""))
 }
 
 tweet_sentiment = function(twt) {
@@ -49,9 +49,16 @@ tweet_sentiment = function(twt) {
   }
 }
 
-tweet_responses = function(twt) {
-  #id = twt$screenName
-  return("Incorrect.")
+negative_response = function(twt) {
+  responses = c("Incorrect.", "I disagree.", "You are wrong.")
+  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
+  updateStatus(response, inReplyTo = twt$id)
+}
+
+affirmative_response = function(twt) {
+  responses = c("I agree.", "You're so right!", "Truth.")
+  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
+  updateStatus(response, inReplyTo = twt$id)
 }
 
 twitterbot = function(handle) {
@@ -66,23 +73,21 @@ twitterbot = function(handle) {
   tweets.txt = tweets.txt %>% removePunctuation %>% removeNumbers %>% tolower
   
   
-  # set max_bot_actions to be equal to however many tweets and retweets the bot should make at most per cron task
   count = 0
-  max_bot_actions = 1
+  max_bot_actions = 3
   
-  # main loop, will terminate early if bot takes max_bot_actions
   for (i in 1:length(tweets)) {
     if (tweet_sentiment(tweets.txt[[i]]) == "neutral") {
-      next #move onto the next tweet if sentiment is indeterminate
+      next
     }
     
-    #else if (tweet_sentiment(tweets.txt[[i]]) == "negative") {
-    #  retweet(tweets[[i]])
-    #  count = count + 1
-    #}
+    else if (tweet_sentiment(tweets.txt[[i]]) == "negative") {
+      affirmative_response(tweets[[i]])
+      count = count + 1
+    }
     
     else {
-      updateStatus(text = paste("Incorrect, @", tweets[[i]]$screenName, sep = ""))
+      negative_response(tweets[[i]])
       count = count + 1
     }
     
