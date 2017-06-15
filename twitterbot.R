@@ -36,32 +36,35 @@ tweet_sentiment = function(twt) {
     sentiment = sum(sentiment$score) 
   }
   
-  if (abs(sentiment) <= 3) {
+  if (abs(sentiment) <= 4) {
     return("neutral")
   }
   
-  if (sentiment < -3) {
+  if (sentiment < -4) {
     return("negative")
   }
   
-  if (sentiment > 3) {
+  if (sentiment > 4) {
     return("positive")
   }
 }
 
 negative_response = function(twt) {
-  responses = c("Incorrect.", "I disagree.", "You are wrong.")
+  responses = c("Incorrect.", "I disagree.", "You are wrong.", 
+                "That's ridiculous.", "No. Just no.",
+                "This makes me want to vomit.", "I'm afraid you're mistaken.")
   response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
   updateStatus(response, inReplyTo = twt$id)
 }
 
 affirmative_response = function(twt) {
-  responses = c("I agree.", "You're so right!", "Truth.")
+  responses = c("I agree.", "You're so right!", "Truth.", 
+                "Well said!", "That's spot on.")
   response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
   updateStatus(response, inReplyTo = twt$id)
 }
 
-twitterbot = function(handle) {
+twitterbot_reply = function(handle) {
   
   tweets = searchTwitter(handle, n = 100, lang = "en")
   tweets = strip_retweets(tweets)
@@ -74,7 +77,7 @@ twitterbot = function(handle) {
   
   
   count = 0
-  max_bot_actions = 3
+  max_bot_actions = 1
   
   for (i in 1:length(tweets)) {
     if (tweet_sentiment(tweets.txt[[i]]) == "neutral") {
@@ -94,5 +97,69 @@ twitterbot = function(handle) {
     if (count == max_bot_actions) {
       break
     }
+  }
+}
+
+construct_sentence = function(sentence_type) {
+  sentence = NULL
+  
+  if (sentence_type == "feeling") {
+    emotions = c("frustrated", "annoyed", "depressed", "sad")
+    connectors = c("because", "about the way", "since", "seeing how")
+    objects_plural = c("people", "others")
+    objects_singular = c("society", "the world")
+    conditions_plural = c("are", "can be", "have the potential to be", "are so", "can be so")
+    conditions_singular = c("is so", "can be so", "is truly", "is", "can be")
+    adverbs = c("astoundingly", "incredibly", "amazingly", "ridiculously", "hilariously")
+    quality = c("stupid", "shallow", "shortsighted", "misguided", "superficial")
+    if (runif(1) > 0.5) {
+      sentence = "feeling "
+    }
+    if (runif(1) > 0.5) {
+      sentence = paste(sentence, sample(emotions, 1), sep = "")
+      sentence = paste(sentence, sample(connectors, 1),
+                     sample(objects_plural, 1), sample(conditions_plural, 1),
+                     sample(adverbs, 1), sample(quality, 1))
+    } else {
+      sentence = paste(sentence, sample(emotions, 1), sep = "")
+      sentence = paste(sentence, sample(connectors, 1),
+                       sample(objects_singular, 1), sample(conditions_singular, 1),
+                       sample(adverbs, 1), sample(quality, 1))
+    }
+    
+    return(sentence)
+  } 
+  
+  if (sentence_type == "sharing") {
+    times = c("today", "recently", "this week", "lately")
+    subjects = c("I have been", "I've been")
+    verbs = c("trying to", "working hard to", "making an effort to", "taking the time to", "using free time to")
+    nouns = c("think", "exercise", "practice my skills", "meditate", "hone my mind")
+    adjectives = c("more.", "in my free time.", "when I get the chance.", "more intensely.")
+    conclusions = c("Would recommend.", "It makes a difference.", "You should too.", "If only others did the same.")
+    
+    if (runif(1) > 0.3) {
+      sentence = paste(sample(times, 1), sample(subjects, 1))
+    } else {
+      sentence = sample(subjects, 1)
+    }
+
+    sentence = paste(sentence, sample(verbs, 1), sample(nouns, 1), sample(adjectives, 1))
+    
+    if (runif(1) > 0.2) {
+      sentence = paste(sentence, sample(conclusions, 1))
+    }
+    
+    return(sentence)
+  }
+}
+
+twitterbot_tweet = function() {
+  moods = c("feeling", "sharing")
+  mood = sample(moods, 1)
+  status = construct_sentence(mood)
+  likelihood = 0.4
+  if (runif(1) < likelihood) {
+    updateStatus(text = status)
   }
 }
