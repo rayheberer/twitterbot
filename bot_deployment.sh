@@ -8,13 +8,6 @@ library(dplyr)
 library(tm)
 library(tidyr)
 
-consumer_key = "dWVyRgkoXtNukY3cHKT7Gq1lb"
-consumer_secret = "Bmgb4N5xLiyF5oEAcJ2KwjniiFki7iescrUHUDCS7KHrPR4mOo"
-access_token = "872426899271815168-P7O3oaadMoEMJ2runZeMXVZFmqH3dxi"
-access_secret = "AZEnBvebNG8dvqwVkA24r6kFvf2L16eNtNipn1sO50uYl"
-
-setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
-
 
 retweet = function(twt) {
   resource_url = "https://api.twitter.com/1.1/statuses/retweet/"
