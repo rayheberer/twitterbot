@@ -11,3 +11,7 @@ Depending on the sentiment, RobertRealGuy will respond either positively or nega
 ## Deployment
 
 RobertRealGuy tweets randomly according to a cron job on a remote AWS instance. The details of the crontab are in crontab.txt.
+
+### Status
+
+Currently OFFLINE for upgrades!
