@@ -9,13 +9,6 @@ library(dplyr)
 library(tm)
 library(tidyr)
 
-
-retweet = function(twt) {
-  resource_url = "https://api.twitter.com/1.1/statuses/retweet/"
-  tweet_id = twt$id
-  POST(url = paste(resource_url, tweet_id, ".json" , sep = ""))
-}
-
 tweet_sentiment = function(twt) {
   tweet.df = data.frame(do.call(rbind, strsplit(twt, " ", fixed=TRUE)), stringsAsFactors = FALSE)
   tweet.tidy = tweet.df %>% gather() 
@@ -46,18 +39,28 @@ negative_response = function(twt) {
   responses = c("Incorrect.", "I disagree.", "You are wrong.", 
                 "That's ridiculous.", "No. Just no.",
                 "This makes me want to vomit.", "I'm afraid you're mistaken.")
-  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
-  updateStatus(response, inReplyTo = twt$id)
+  sample(responses, size = 1)
 }
 
 affirmative_response = function(twt) {
   responses = c("I agree.", "You're so right!", "Truth.", 
-                "Well said!", "That's spot on.")
-  response = paste("@", twt$screenName, " ", sample(responses, size = 1), sep="")
-  updateStatus(response, inReplyTo = twt$id)
+                "Well said!", "That's spot on.", "Agreed.", "Agreed!",
+                "We are in agreement.", "Finally, someone sane.")
+  sample(responses, size = 1)
 }
 
-twitterbot_reply = function(handle) {
+
+retweet = function(twt, comment=NULL) {
+  url = paste0('https://twitter.com/', twt$screenName, '/status/', twt$id)
+  updateStatus(paste(comment, url), bypassCharLimit = TRUE)
+}
+
+reply = function(twt, content) {
+  content = paste0("@", twt$screenName, " ", content)
+  updateStatus(content, inReplyTo = twt$id)
+}
+
+twitterbot_respond = function(handle) {
   
   tweets = searchTwitter(handle, n = 100, lang = "en")
   tweets = strip_retweets(tweets)
@@ -70,7 +73,7 @@ twitterbot_reply = function(handle) {
   
   
   count = 0
-  max_bot_actions = 1
+  max_bot_actions = 2
   
   for (i in 1:length(tweets)) {
     if (tweet_sentiment(tweets.txt[[i]]) == "neutral") {
@@ -78,12 +81,18 @@ twitterbot_reply = function(handle) {
     }
     
     else if (tweet_sentiment(tweets.txt[[i]]) == "negative") {
-      affirmative_response(tweets[[i]])
+      if (runif(1) > 0.7) {
+        response = affirmative_response(tweets[[i]])
+      } else {
+        response = NULL
+      }
+      retweet(tweets[[i]], comment = response)
       count = count + 1
     }
     
     else {
-      negative_response(tweets[[i]])
+      response = negative_response(tweets[[i]])
+      reply(tweets[[i]], content = response)
       count = count + 1
     }
     
@@ -105,6 +114,7 @@ construct_sentence = function(sentence_type) {
     conditions_singular = c("is so", "can be so", "is truly", "is", "can be")
     adverbs = c("astoundingly", "incredibly", "amazingly", "ridiculously", "hilariously")
     quality = c("stupid", "shallow", "shortsighted", "misguided", "superficial")
+    
     if (runif(1) > 0.5) {
       sentence = "feeling "
     }
